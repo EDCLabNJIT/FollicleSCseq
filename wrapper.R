@@ -1,5 +1,4 @@
 devtools::document("./scRNAhelper/")
-devtools::load_all("./scRNAhelper/")
 sc.cells <- mergedata(min.features = 1000, min.cells = 3,
                       TenX.folder = "./10X/",
                       saverds = TRUE, write.rdsfile = "./saveddata/merged_cells.rds")
