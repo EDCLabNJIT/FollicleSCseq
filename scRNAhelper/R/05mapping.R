@@ -50,7 +50,7 @@ if (length(atlas.rename) > 0) {
   }
 }
 
-morris.atlas <- FindVariableFeatures(morris.atlas, selection.method = "vst", nfeatures = 5000, verbose = FALSE)
+morris.atlas <- FindVariableFeatures(morris.atlas, selection.method = "vst", nfeatures = 2000, verbose = FALSE)
 
 if (is.null(feature.folder)) {
   all.features <- NULL

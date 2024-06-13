@@ -20,12 +20,12 @@ atlas.rename <- c("GC_Estrous"            = "GC_Luteinizing",
                   "M_Cortical Stroma"     = "M_Steroidogenic Stroma",
                   "M_Medullary Stroma"    = "M_Fibroblast-like Stroma")
 
-sc.cells <- mapcells(atlasFile = "./morrisdata/ovary_0.rds",
+sc.cells <- mapcells(sc.cells, atlasFile = "./morrisdata/ovary_0.rds",
                 make.plots = TRUE, plotLocation = "./images/",
                 atlas.rename = atlas.rename, PC = 15, umapPC = 20,
-                anchor.n.trees = 250, anchor.k.anchor = 100, anchor.k.score = 200,
+                anchor.n.trees = 50, anchor.k.anchor = 5, anchor.k.score = 50,
                 saverds = TRUE, write.rdsfile = "./saveddata/mapped_cells.rds",
-                feature.folder = "./morrismarkers/",
+                feature.folder = NULL,
                 projumapargs = list(annoy.metric = "cosine"))
 
 DE.data <- calcDE(sc.cells,

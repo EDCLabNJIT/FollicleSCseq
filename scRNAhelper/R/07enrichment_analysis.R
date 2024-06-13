@@ -23,7 +23,7 @@ library(ggplot2)
 enrich <- function(df = NULL, DEFolder = "./data/",
                    de.q.val = .05, log2fold.val = 0, sign.val = 0,
                    level = 0, sheetname = "Granulosa",
-                   savedata = TRUE, EAFolder = "./data/EA") {
+                   savedata = TRUE, EAFolder = "./data/") {
 
 log2fold.val = abs(log2fold.val)
 

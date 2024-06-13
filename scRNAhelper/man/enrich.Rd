@@ -13,7 +13,7 @@ enrich(
   level = 0,
   sheetname = "Granulosa",
   savedata = TRUE,
-  EAFolder = "./data/EA"
+  EAFolder = "./data/"
 )
 }
 \arguments{
