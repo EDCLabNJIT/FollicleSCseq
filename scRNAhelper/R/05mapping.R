@@ -146,7 +146,7 @@ if (make.plots) {
   p4 <- DimPlot(sc.cells, reduction = "umap", group.by = "Level1", shuffle = TRUE, seed = 2,
                 label = TRUE, repel=TRUE, label.box = TRUE, label.size = 3, cols=colmap.level1) + NoLegend()
   p <- ggarrange(p3, p4, nrow=2, ncol=1)
-  ggsave(paste0(plotLocation,"mapping_nolegend.png"), plot = p, width = 12, height = 12, dpi = 300, units = "in")
+  ggsave(paste0(plotLocation,"mapping_nolegend.png"), plot = p, width = 6, height = 12, dpi = 300, units = "in")
   
   #q0 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level0",
   #              cols=colmap.level0) + guides(col = guide_legend(ncol = 1, override.aes = c(size = 3)))
@@ -157,13 +157,16 @@ if (make.plots) {
   #q0 <- q0 + NoLegend()
   #q1 <- q1 + NoLegend()
   q3 <- DimPlot(sc.cells, reduction = "umap", group.by = "Level0",
-                cols=colmap.level0) + NoLegend()
+                cols=colmap.level0)# + NoLegend()
   q4 <- DimPlot(sc.cells, reduction = "umap", group.by = "Level1",
-                cols=colmap.level1) + NoLegend()
-  
-  q <- ggarrange(q3, q4, nrow = 2, ncol = 1, widths = c(1,1,.4)) +
+                cols=colmap.level1)# + NoLegend()
+  legend1 <- cowplot::get_legend(q3)
+  legend2 <- cowplot::get_legend(q4)
+  q3 <- q3 + NoLegend()
+  q4 <- q4 + NoLegend()
+  q <- ggarrange(q3, legend1, q4, legend2, nrow = 2, ncol = 2, widths = c(1,.4)) +
           theme(panel.background = element_rect(fill="white"))
-  ggsave(paste0(plotLocation,"mapping.png"), plot = q, width = 14.5, height = 12, dpi = 300, units = "in")
+  ggsave(paste0(plotLocation,"mapping.png"), plot = q, width = 8, height = 12, dpi = 300, units = "in")
 }
   
 # save objects
