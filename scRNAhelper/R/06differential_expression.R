@@ -27,10 +27,10 @@ out = c()
 
 for (level in 0:1) {
   # pseudobulks each identity
-  pseudo.sc <- AggregateExpression(sc.cells, assays = "RNA", return.seurat = TRUE, group.by = c("stim","orig.ident",paste0("predicted.Level",level)))
+  pseudo.sc <- AggregateExpression(sc.cells, assays = "RNA", return.seurat = TRUE, group.by = c("stim","orig.ident",paste0("Level",level)))
   
   # creates the identities of the bulks
-  preds <- pseudo.sc[[paste0("predicted.Level",level)]] %>% as.vector
+  preds <- pseudo.sc[[paste0("Level",level)]] %>% as.vector
   stim <- pseudo.sc$stim %>% as.vector
   
   #combines identities into single identifier

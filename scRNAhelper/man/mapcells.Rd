@@ -6,17 +6,17 @@
 \usage{
 mapcells(
   seuratObj = NULL,
-  seuratFile = "./saveddata/preprocessed_cells.rds",
+  seuratFile = "./saveddata/clustered_cells.rds",
   atlasFile = "./morrisdata/ovary_0.rds",
   make.plots = TRUE,
   plotLocation = "./images/",
   atlas.rename = c(),
   umapPC = 20,
   PC = 15,
-  anchor.n.trees = 250,
-  anchor.k.anchor = 100,
-  anchor.k.score = 200,
-  feature.folder = "./morrismarkers/",
+  anchor.n.trees = 50,
+  anchor.k.anchor = 15,
+  anchor.k.score = 100,
+  marker.folder = "./morrismarkers/",
   saverds = TRUE,
   write.rdsfile = "./saveddata/mapped_cells.rds",
   projumapargs = list()
@@ -45,14 +45,14 @@ mapcells(
 
 \item{anchor.k.score}{\code{k.score} paramter for \code{FindTransferAnchors}}
 
-\item{feature.folder}{folder with \code{.csv} files that contain markers to use}
-
 \item{saverds}{saves as an rds if \code{TRUE}.}
 
 \item{write.rdsfile}{path to save rds file to if \code{saverds == TRUE}}
+
+\item{feature.folder}{folder with \code{.csv} files that contain markers to use}
 }
 \value{
-a Seurat Object
+a Splitted Seurat Object
 }
 \description{
 Maps the cells onto the Morris atlas

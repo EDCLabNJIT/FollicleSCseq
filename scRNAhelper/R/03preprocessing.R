@@ -67,7 +67,9 @@ sc.filtered <- IntegrateLayers(object = sc.filtered, method = CCAIntegration, or
 sc.filtered[["RNA"]] <- JoinLayers(sc.filtered[["RNA"]])
 
 # save data
-saveRDS(sc.filtered, write.rdsfile)
+if (saverds) {
+  saveRDS(sc.filtered, write.rdsfile)
+}
 
 sc.filtered
 }

@@ -1,11 +1,11 @@
-Antral-Mural,Mitotic,Luteinizing mural,Preantral-Cumulus,Atretic,Regressing CL,Active CL
-Inhba,Top2a,Tinagl1,Gatm,Ghr,Ptgfr,Neat1
-Nppc,Ube2c,Adamts1,Kctd14,Pik3ip1,Efhd1,Col3a1
-Mro,Racgap1,Mrap,Igfbp5,Cald1,S100a6,Igfbp7
-Nap1l5,Birc5,Prss35,Col18a1,Itih5,Tnc,Sfrp4
-Hsd17b1,Ccna2,Mt2,Pcsk6,Cfh,Lipg,Cyp11a1
-Slc26a7,Ccnb2,Parm1,Slc18a2,Asb4,Sfrp4,Plin4
-Grem1,Hmgb2,Loxl2,Fndc5,Ctgf,Lgmn,Onecut2
-X1110032F04Rik,Cdca8,S100a6,Wt1,Ntn4,Star,Col1a2
-Cyp19a1,Cdk1,Cemip,Tmem184a,Cdc42ep3,Akr1c18,Col1a1
-Tom1l1,Prc1,Cdkn1a,X1190002N15Rik,Fhl1,Sgk1,Gm42669
+Antral-Mural,Mitotic,Preantral-Cumulus,Atretic,Luteinizing mural,Regressing CL,Active CL
+Inhba,Top2a,Gatm,Ghr,Tinagl1,Ptgfr,Neat1
+Nppc,Ube2c,Kctd14,Pik3ip1,Adamts1,Efhd1,Col3a1
+Mro,Racgap1,Igfbp5,Cald1,Mrap,S100a6,Igfbp7
+Nap1l5,Birc5,Col18a1,Itih5,Prss35,Tnc,Sfrp4
+Hsd17b1,Ccna2,Pcsk6,Cfh,Mt2,Lipg,Cyp11a1
+Slc26a7,Ccnb2,Slc18a2,Asb4,Parm1,Lgmn,Plin4
+Grem1,Hmgb2,Fndc5,Ctgf,Loxl2,Star,Onecut2
+X1110032F04Rik,Cdca8,Wt1,Ntn4,Cemip,Akr1c18,Col1a2
+Cyp19a1,Cdk1,Tmem184a,Cdc42ep3,Cdkn1a,Sgk1,Col1a1
+Tom1l1,Prc1,X1190002N15Rik,Fhl1,ignore1,ignore2,Gm42669

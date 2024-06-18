@@ -37,11 +37,11 @@ sheets = list()
 for (level in 0:1) {
   d = list()
   for (ident in as.character(2262:2267)) {
-    d[[ident]] <- cells.split.by.orig[[ident]][[paste0("predicted.Level",level)]] %>% table %>% as.data.frame
+    d[[ident]] <- cells.split.by.orig[[ident]][[paste0("Level",level)]] %>% table %>% as.data.frame
     names(d[[ident]]) <- c("Cell Type",ident)
   }
   for (ident in c("CTRL", "MM")) {
-    d[[ident]] <- cells.split.by.stim[[ident]][[paste0("predicted.Level",level)]] %>% table %>% as.data.frame
+    d[[ident]] <- cells.split.by.stim[[ident]][[paste0("Level",level)]] %>% table %>% as.data.frame
     names(d[[ident]]) <- c("Cell Type",ident)
   }
   

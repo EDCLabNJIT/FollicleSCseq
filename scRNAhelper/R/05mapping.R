@@ -7,9 +7,11 @@ library(ggpubr)
 library(gridExtra)
 library(readxl)
 
+
+
 #' Maps the cells onto the Morris atlas
 #' 
-#' @return a Seurat Object
+#' @return a Splitted Seurat Object
 #' 
 #' @param seuratObj input seruat object
 #' @param seuratFile file for seurat rds if `seuratObj` is `NULL`
@@ -25,12 +27,12 @@ library(readxl)
 #' @param feature.folder folder with `.csv` files that contain markers to use
 #' @param saverds saves as an rds if `TRUE`.
 #' @param write.rdsfile path to save rds file to if `saverds == TRUE`
-mapcells <- function(seuratObj = NULL, seuratFile = "./saveddata/preprocessed_cells.rds",
+mapcells <- function(seuratObj = NULL, seuratFile = "./saveddata/clustered_cells.rds",
                        atlasFile = "./morrisdata/ovary_0.rds",
                        make.plots = TRUE, plotLocation = "./images/",
                        atlas.rename = c(), umapPC = 20,
-                       PC = 15, anchor.n.trees = 250, anchor.k.anchor = 100, anchor.k.score = 200,
-                       feature.folder = "./morrismarkers/",
+                       PC = 15, anchor.n.trees = 50, anchor.k.anchor = 15, anchor.k.score = 100,
+                       marker.folder = "./morrismarkers/",
                        saverds = TRUE, write.rdsfile = "./saveddata/mapped_cells.rds", projumapargs = list()) {
 
 #import data
@@ -50,34 +52,78 @@ if (length(atlas.rename) > 0) {
   }
 }
 
-morris.atlas <- FindVariableFeatures(morris.atlas, selection.method = "vst", nfeatures = 2000, verbose = FALSE)
-
-if (is.null(feature.folder)) {
-  all.features <- NULL
-} else {
-  df.list = list()
-  for (filename in list.files(feature.folder, pattern = ".csv")) {
-    df.list[[filename]] <- read.csv(paste0(feature.folder,filename), nrows = 10)
-  }
-  all.features <- Reduce(cbind,df.list)
+# gets markers
+markers <- list()
+for (filename in list.files("morrismarkers/", pattern = ".csv")) {
+  markers[[filename]] <- read.csv(paste0("morrismarkers/",filename), nrows = 10)
 }
 
 # Calculate UMAP on Morris Atlas
 # It already contains a umap, but didnt return the model, which is necessary to map
-morris.atlas <- RunUMAP(morris.atlas, dims = 1:20, reduction = "pca",reduction.name = "umap",
+morris.atlas <- RunUMAP(morris.atlas, dims = 1:umapPC, reduction = "pca",reduction.name = "umap",
                         return.model = TRUE)
 
-#calculate anchors and map cells
-sc.anchors <- FindTransferAnchors(reference = morris.atlas, query = sc.cells, dims = 1:PC,
-                                  features = unlist(all.features),
-                                  reference.reduction = "pca", n.trees = anchor.n.trees,
-                                  k.anchor = anchor.k.anchor, k.score = anchor.k.score)
 
-sc.cells <- MapQuery(anchorset = sc.anchors, query = sc.cells, reference = morris.atlas,
-                        reference.reduction = "pca", reduction.model = "umap", refdata = list(Level0 = "Level0", Level1 = "Level1"),
-                     projectumap.args = projumapargs)
+# projects umap onto sc.cells
+sc.cells <- ProjectUMAP(reference = morris.atlas, query = sc.cells, query.dims = 1:umapPC, reference.dims = 1:umapPC,
+                        query.reduction = "pca", reference.reduction = "pca", reduction.model = "umap", reduction.name = "umap2")
 
-Idents(sc.cells) <- sc.cells$predicted.Level0
+
+
+
+# split sc and atlas by level 0
+sc.split = SplitObject(sc.cells, split.by = "Level0")
+atlas.split = SplitObject(morris.atlas, split.by = "Level0")
+
+sc.mes = sc.split$Mesenchyme
+sc.gran = sc.split$Granulosa
+
+atlas.mes <- atlas.split$Mesenchyme
+atlas.gran <- atlas.split$Granulosa
+
+
+# granlosa level 1
+gran.anchors <- FindTransferAnchors(reference = atlas.gran, query = sc.gran, dims = 1:PC,
+                                    reference.reduction = "pca", k.anchor = anchor.k.anchor, k.score = anchor.k.score, n.trees = anchor.n.trees)
+
+sc.gran <- MapQuery(anchorset = gran.anchors, query = sc.gran, reference = atlas.gran,
+                    reference.reduction = "pca", reduction.model = "umap", refdata = list(Level1 = "Level1"))
+sc.gran$Level1 <- sc.gran$predicted.Level1
+Idents(sc.gran) <- "Level1"
+
+# mesenchyme level 1
+mes.anchors <- FindTransferAnchors(reference =atlas.mes, query = sc.mes, dims = 1:PC,
+                                    reference.reduction = "pca", k.anchor = anchor.k.anchor, k.score = anchor.k.score, n.trees = anchor.n.trees)
+
+sc.mes <- MapQuery(anchorset = mes.anchors, query = sc.mes, reference = atlas.mes,
+                               reference.reduction = "pca", reduction.model = "umap", refdata = list(Level1 = "Level1"))
+sc.mes$Level1 <- sc.mes$predicted.Level1
+Idents(sc.mes) <- "Level1"
+
+# moves Level1 objects up to original object
+Idents(sc.cells) <- "Level0"
+cells <- Idents(sc.cells)
+levels(cells) <- c(levels(cells), levels(sc.gran), levels(sc.mes))
+cells[cells == "Granulosa"] <- Idents(sc.gran)
+cells[cells == "Mesenchyme"] <- Idents(sc.mes)
+sc.cells$Level1 <- cells
+Idents(sc.cells) <- "Level1"
+
+# dot plots
+if (make.plots) {
+  dotgran <- DotPlot(sc.gran, features = markers$morris_gran_markers.csv, group.by = "Level1", cols= "RdBu") +
+    theme_bw(base_size = 15) +
+    theme(axis.text.x = element_text(angle = 40, hjust=1), axis.text = element_text(color = "black"),
+          panel.grid.major = element_blank(), strip.text.x = element_text(face="bold"), axis.text.y = element_text(face="bold"))
+  
+  dotmes <- DotPlot(sc.mes, features = markers$morris_mes_markers.csv, group.by = "Level1", cols= "RdBu") +
+    theme_bw(base_size = 15) +
+    theme(axis.text.x = element_text(angle = 40, hjust=1), axis.text = element_text(color = "black"),
+          panel.grid.major = element_blank(), strip.text.x = element_text(face="bold"), axis.text.y = element_text(face="bold"))
+  
+  ggsave(paste0(plotLocation,"gran_dot.png"), plot = dotgran, width = 18, height = 4, dpi = 300, units = "in")
+  ggsave(paste0(plotLocation,"mes_dot.png"), plot = dotmes, width = 18, height = 4, dpi = 300, units = "in")
+}
 
 
 # plotting
@@ -86,42 +132,44 @@ if (make.plots) {
                          "#FB9A99","palegreen2","#CAB2D6","#FDBF6F","gray70","khaki2","maroon","orchid1",
                          "deeppink1","steelblue4","darkturquoise","green1","yellow4","yellow3","darkorange4","brown" )
   
-  celltypes.level0 <- morris.atlas$Level0 %>% table %>% sort(decreasing = TRUE) %>% names
-  celltypes.level1 <- morris.atlas$Level1 %>% table %>% sort(decreasing = TRUE) %>% names
+  celltypes.level0 <- sc.cells$Level0 %>% table %>% sort(decreasing = TRUE) %>% names
+  celltypes.level1 <- sc.cells$Level1 %>% table %>% sort(decreasing = TRUE) %>% names
   colmap.level0 <- setNames(col_palette[1:length(celltypes.level0)], celltypes.level0)
   colmap.level1 <- setNames(col_palette[1:length(celltypes.level1)], celltypes.level1)
   
-  p0 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level0",
+  #p0 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level0",
+  #              label = TRUE, repel=TRUE, label.box = TRUE, label.size = 3, cols=colmap.level0) + NoLegend()
+  #p1 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level1", shuffle = TRUE,
+  #              label = TRUE, repel=TRUE, label.box = TRUE, label.size = 3, cols=colmap.level1) + NoLegend()
+  p3 <- DimPlot(sc.cells, reduction = "umap", group.by = "Level0",
                 label = TRUE, repel=TRUE, label.box = TRUE, label.size = 3, cols=colmap.level0) + NoLegend()
-  p1 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level1", shuffle = TRUE,
+  p4 <- DimPlot(sc.cells, reduction = "umap", group.by = "Level1", shuffle = TRUE, seed = 2,
                 label = TRUE, repel=TRUE, label.box = TRUE, label.size = 3, cols=colmap.level1) + NoLegend()
-  p3 <- DimPlot(sc.cells, reduction = "ref.umap", group.by = "predicted.Level0",
-                label = TRUE, repel=TRUE, label.box = TRUE, label.size = 3, cols=colmap.level0) + NoLegend()
-  p4 <- DimPlot(sc.cells, reduction = "ref.umap", group.by = "predicted.Level1", shuffle = TRUE, seed = 2,
-                label = TRUE, repel=TRUE, label.box = TRUE, label.size = 3, cols=colmap.level1) + NoLegend()
-  p <- ggarrange(p0, p3, p1, p4, nrow=2, ncol=2)
+  p <- ggarrange(p3, p4, nrow=2, ncol=1)
   ggsave(paste0(plotLocation,"mapping_nolegend.png"), plot = p, width = 12, height = 12, dpi = 300, units = "in")
   
-  q0 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level0",
-                cols=colmap.level0) + guides(col = guide_legend(ncol = 1, override.aes = c(size = 3)))
-  q1 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level1",
-                cols=colmap.level1) + guides(col = guide_legend(ncol = 1, override.aes = c(size = 3)))
-  legend1 <- cowplot::get_legend(q0)
-  legend2 <- cowplot::get_legend(q1)
-  q0 <- q0 + NoLegend()
-  q1 <- q1 + NoLegend()
-  q3 <- DimPlot(sc.cells, reduction = "ref.umap", group.by = "predicted.Level0",
+  #q0 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level0",
+  #              cols=colmap.level0) + guides(col = guide_legend(ncol = 1, override.aes = c(size = 3)))
+  #q1 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level1",
+  #              cols=colmap.level1) + guides(col = guide_legend(ncol = 1, override.aes = c(size = 3)))
+  #legend1 <- cowplot::get_legend(q0)
+  #legend2 <- cowplot::get_legend(q1)
+  #q0 <- q0 + NoLegend()
+  #q1 <- q1 + NoLegend()
+  q3 <- DimPlot(sc.cells, reduction = "umap", group.by = "Level0",
                 cols=colmap.level0) + NoLegend()
-  q4 <- DimPlot(sc.cells, reduction = "ref.umap", group.by = "predicted.Level1",
+  q4 <- DimPlot(sc.cells, reduction = "umap", group.by = "Level1",
                 cols=colmap.level1) + NoLegend()
   
-  q <- ggarrange(q0,q3,legend1, q1, q4, legend2, nrow = 2, ncol = 3, widths = c(1,1,.4)) +
+  q <- ggarrange(q3, q4, nrow = 2, ncol = 1, widths = c(1,1,.4)) +
           theme(panel.background = element_rect(fill="white"))
   ggsave(paste0(plotLocation,"mapping.png"), plot = q, width = 14.5, height = 12, dpi = 300, units = "in")
 }
-
+  
 # save objects
-saveRDS(sc.cells, write.rdsfile)
+if (saverds) {
+  saveRDS(sc.cells, write.rdsfile)
+}
 
 sc.cells
 }
