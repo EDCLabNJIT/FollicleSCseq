@@ -36,15 +36,18 @@ sc.cells <- mapcells(seuratObj = NULL, seuratFile = "./saveddata/clustered_cells
                      marker.folder = "./morrismarkers/",
                      projumapargs = list(annoy.metric = "cosine"))
 
-DE.data <- calcDE(sc.cells,
+DE.data <- calcDE(NULL, 
                   savedata = TRUE, DEFolder = "./data/")
 
-enrichvals = list(c(1, "GC-Mural", .25),
-                  c(1, "GC-Mural", .05),
-                  c(0, "Granulosa", .05),
-                  c(0, "Granulosa", .25))
+enrichvals = list(list(1, "GC-Mural" , .25, 0 , 0),
+                  list(0, "Granulosa", .05, 0 , 0),
+                  list(1, "GC-Mural" , .05, 1 , 0),
+                  list(1, "GC-Mural" , .05, -1, 0),
+                  list(1, "GC-Mural" , .05, 1 , .3),
+                  list(1, "GC-Mural" , .05, -1, .3))
 for (eval in enrichvals) {
-  EA.data <- enrich(level = eval[1], sheetname = eval[2], de.q.val = eval[3], DEFolder = "./data/", EAFolder = "./data/")
+  EA.data <- enrich(p.val = "p_val_adj", level = eval[[1]], sheetname = eval[[2]], de.q.val = eval[[3]], 
+                    sign.val = eval[[4]], log2fold.val = eval[[5]], DEFolder = "./data/", EAFolder = "./data/")
 }
 
 t <- calcsamplesize(sc.cells)

@@ -7,6 +7,7 @@
 enrich(
   df = NULL,
   DEFolder = "./data/",
+  p.val = "p_val_adj",
   de.q.val = 0.05,
   log2fold.val = 0,
   sign.val = 0,
@@ -20,6 +21,8 @@ enrich(
 \item{df}{input data frame}
 
 \item{DEFolder}{folder for DE data if \code{df} is \code{NULL}}
+
+\item{p.val}{what type of p value to choose ("p_val_adj" or "FDR")}
 
 \item{de.q.val}{maximum adjusted p value for differentially expressed genes}
 

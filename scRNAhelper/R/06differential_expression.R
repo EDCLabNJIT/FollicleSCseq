@@ -53,9 +53,10 @@ for (level in 0:1) {
   sheets <- list()
   for (cell_type in cell_types){
     bulk.de <- FindMarkers(object = pseudo.sc, 
-                           ident.1 = paste0(cell_type,"_CTRL"), ident.2 = paste0(cell_type,"_MM"),
+                           ident.1 = paste0(cell_type,"_MM"), ident.2 = paste0(cell_type,"_CTRL"),
                            test.use = "DESeq2", verbose = FALSE)
     
+    bulk.de$FDR <- p.adjust(bulk.de$p_val, method ="BH")
     sheets[[cell_type]] <- tibble::rownames_to_column(bulk.de,"gene")
   }
   out[[level %>% as.character]] <- sheets

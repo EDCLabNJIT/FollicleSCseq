@@ -13,6 +13,7 @@ library(ggplot2)
 #' 
 #' @param df input data frame
 #' @param DEFolder folder for DE data if `df` is `NULL`
+#' @param p.val what type of p value to choose ("p_val_adj" or "FDR")
 #' @param level level to search at (0 or 1) if `df` is `NULL`
 #' @param cell_type cell type to search as labelled by name if `df` is `NULL`
 #' @param de.q.val maximum adjusted p value for differentially expressed genes
@@ -20,12 +21,12 @@ library(ggplot2)
 #' @param sign.val -1 for values less than negative. 0 for greater than or less than negative. 1 for values greater
 #' @param savedata saves as an xslx if `TRUE`.
 #' @param EAFolder path to EA file if `savedata == TRUE`
-enrich <- function(df = NULL, DEFolder = "./data/",
+enrich <- function(df = NULL, DEFolder = "./data/", p.val = "p_val_adj",
                    de.q.val = .05, log2fold.val = 0, sign.val = 0,
                    level = 0, sheetname = "Granulosa",
                    savedata = TRUE, EAFolder = "./data/") {
 
-log2fold.val = abs(log2fold.val)
+log2fold.val <- abs(log2fold.val)
 
 if (is.null(df)) {
   # read data
@@ -34,7 +35,7 @@ if (is.null(df)) {
 }
 
 # filter genes
-q.filter <- df$p_val_adj < de.q.val
+q.filter <- df[[p.val]] < de.q.val
 log2.filter <- q.filter & FALSE # set to all FALSE
 if (sign.val <= 0) {
   log2.filter <- log2.filter | df$avg_log2FC <= -log2fold.val
@@ -44,6 +45,9 @@ if (sign.val >= 0) {
 }
   
 genes <- df[q.filter & log2.filter,"gene"]$gene
+#geneList <- df[q.filter & log2.filter,"avg_log2FC"]$avg_log2FC
+#names(geneList) <- genes
+#geneList <- sort(geneList, decreasing = TRUE)
 
 # enrich genes
 go.bp.en <- enrichGO(gene     = genes,

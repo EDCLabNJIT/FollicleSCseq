@@ -25,8 +25,6 @@ for (num in as.character(2262:2267)){
 
 # Convert datasets to Seurat objects
 # note: want 'Gene Expression'
-# min features: 1000
-# min cells: 3
 ser.objs <- list()
 for (num in as.character(2262:2267)){
   ser.objs[[num]] <- CreateSeuratObject(data.in[[num]][["Gene Expression"]],
