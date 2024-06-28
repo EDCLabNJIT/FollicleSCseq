@@ -7,6 +7,7 @@
 calcDE(
   seuratObj = NULL,
   seuratFile = "./saveddata/mapped_cells.rds",
+  logfc.threshhold = 0.1,
   savedata = TRUE,
   DEFolder = "./data/"
 )
@@ -15,6 +16,8 @@ calcDE(
 \item{seuratObj}{input seruat object}
 
 \item{seuratFile}{file for seurat rds if \code{seuratObj} is \code{NULL}}
+
+\item{logfc.threshhold}{minimum logfc to be considered for DE.}
 
 \item{savedata}{saves as an xslx if \code{TRUE}.}
 

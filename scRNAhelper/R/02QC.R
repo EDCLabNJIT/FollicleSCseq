@@ -39,7 +39,7 @@ if (make.plots) {
 }
 
 # filter data
-sc.filter <- subset(sc.ser, subset = nFeature_RNA > 3500 & nFeature_RNA < 7000 & percent_mt < 5 & nCount_RNA < nCount.rna.upper)
+sc.filter <- subset(sc.ser, subset = nFeature_RNA > nFeature.lower & nFeature_RNA < nFeature.upper & percent_mt < percent.mt.upper & nCount_RNA < nCount.rna.upper)
 
 if (make.plots) {
   # Supplementary image postQCViolin

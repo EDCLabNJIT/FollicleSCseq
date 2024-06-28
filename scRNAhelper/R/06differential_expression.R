@@ -11,9 +11,11 @@ library(writexl)
 #' 
 #' @param seuratObj input seruat object
 #' @param seuratFile file for seurat rds if `seuratObj` is `NULL`
+#' @param logfc.threshhold minimum logfc to be considered for DE.
 #' @param savedata saves as an xslx if `TRUE`.
 #' @param DEFolder path to DE file if `savedata == TRUE
 calcDE <- function(seuratObj = NULL, seuratFile = "./saveddata/mapped_cells.rds",
+                   logfc.threshhold = 0.1,
                    savedata = TRUE, DEFolder = "./data/") {
 
 # import data
@@ -54,7 +56,7 @@ for (level in 0:1) {
   for (cell_type in cell_types){
     bulk.de <- FindMarkers(object = pseudo.sc, 
                            ident.1 = paste0(cell_type,"_MM"), ident.2 = paste0(cell_type,"_CTRL"),
-                           test.use = "DESeq2", verbose = FALSE)
+                           test.use = "DESeq2", verbose = FALSE, features = VariableFeatures(pseudo.sc))
     
     bulk.de$FDR <- p.adjust(bulk.de$p_val, method ="BH")
     sheets[[cell_type]] <- tibble::rownames_to_column(bulk.de,"gene")

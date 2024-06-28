@@ -13,11 +13,12 @@ library(ggplot2)
 #' @param make.plots Make plots?
 #' @param plotLocation Folder to put plots if `make.plots`
 #' @param nfeatures features to select
+#' @param regress.mt regress out mitochondrial percentage when scaling?
 #' @param saverds saves as an rds if `TRUE`.
 #' @param write.rdsfile path to save rds file to if `saverds == TRUE`
 preprocess <- function(seuratObj = NULL, seuratFile = "./saveddata/filtered_cells.rds", 
                make.plots = TRUE, plotLocation = "./images/",
-               nfeatures = 2000,
+               nfeatures = 2000, regress.mt = TRUE,
                saverds = TRUE, write.rdsfile = "./saveddata/preprocessed_cells.rds") {
 
 # load filtered cells
@@ -31,7 +32,6 @@ if (is.null(seuratObj)){
 sc.filtered <- NormalizeData(sc.filtered, verbose = FALSE)
 
 # feature selecting
-# 2000 features selected
 sc.filtered <- FindVariableFeatures(sc.filtered, selection.method = "vst", nfeatures = nfeatures, verbose = FALSE)
 
 if (make.plots) {
@@ -42,7 +42,11 @@ if (make.plots) {
 }
 
 # scaling
-sc.filtered <- ScaleData(sc.filtered, vars.to.regress = "percent_mt")
+if (regress.mt) {
+  sc.filtered <- ScaleData(sc.filtered, vars.to.regress = "percent_mt")
+} else {
+  sc.filtered <- ScaleData(sc.filtered)
+}
 
 # PCA
 sc.filtered <- RunPCA(sc.filtered, features = VariableFeatures(object = sc.filtered))

@@ -10,6 +10,7 @@ preprocess(
   make.plots = TRUE,
   plotLocation = "./images/",
   nfeatures = 2000,
+  regress.mt = TRUE,
   saverds = TRUE,
   write.rdsfile = "./saveddata/preprocessed_cells.rds"
 )
@@ -24,6 +25,8 @@ preprocess(
 \item{plotLocation}{Folder to put plots if \code{make.plots}}
 
 \item{nfeatures}{features to select}
+
+\item{regress.mt}{regress out mitochondrial percentage when scaling?}
 
 \item{saverds}{saves as an rds if \code{TRUE}.}
 
