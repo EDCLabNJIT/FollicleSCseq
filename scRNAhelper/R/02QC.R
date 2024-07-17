@@ -71,13 +71,13 @@ if (make.plots) {
   
   
   sink(testloc)
-  print("cells before\n")
+  print("cells before")
   print(precount)
-  print("\ncells after\n")
+  print("cells after")
   print(postcount)
-  print("\nproportions\n")
+  print("proportions")
   print(proportions)
-  print("\n")
+  print("")
   print(prop.test(cbind(postcount, precount-postcount)))
   print(t.test(proportions[1:3], proportions[4:6]))
   sink()

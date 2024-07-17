@@ -1,16 +1,16 @@
-[1] "cells before\n"
+[1] "cells before"
 .
 2262 2263 2264 2265 2266 2267 
 3294 2863 2727 3020 3348 2750 
-[1] "\ncells after\n"
+[1] "cells after"
 .
 2262 2263 2264 2265 2266 2267 
 1811 1738 1646 1674 1903 1564 
-[1] "\nproportions\n"
+[1] "proportions"
 .
      2262      2263      2264      2265      2266      2267 
 0.5497875 0.6070555 0.6035937 0.5543046 0.5683990 0.5687273 
-[1] "\n"
+[1] ""
 
 	6-sample test for equality of proportions without continuity correction
 
