@@ -9,10 +9,12 @@ QC(
   seuratFile = "./saveddata/merged_cells.rds",
   make.plots = TRUE,
   plotLocation = "./images/",
+  dataLoc = "./data/",
   nFeature.lower = 3500,
   nFeature.upper = 7000,
   percent.mt.upper = 5,
   nCount.rna.upper = 60000,
+  findDbls = FALSE,
   saverds = TRUE,
   write.rdsfile = "./saveddata/filtered_cells.rds"
 )
@@ -33,6 +35,8 @@ QC(
 \item{percent.mt.upper}{removes cells with \code{percemt_mt > percent.mt.upper}}
 
 \item{nCount.rna.upper}{removes cells with \code{nCount_RNA > nCount.rna.upper}}
+
+\item{findDbls}{use \code{scDblFinder}?}
 
 \item{saverds}{saves as an rds if \code{TRUE}.}
 

@@ -26,6 +26,8 @@ enrich <- function(df = NULL, DEFolder = "./data/", p.val = "p_val_adj",
                    level = 0, sheetname = "Granulosa",
                    savedata = TRUE, EAFolder = "./data/") {
 
+#df = NULL; DEFolder = "./data/"; p.val ="FDR"; de.q.val = .05; log2fold.val = 0; sign.val = 0; level = 0; sheetname = "Granulosa"
+  
 log2fold.val <- abs(log2fold.val)
 
 if (is.null(df)) {
@@ -45,9 +47,9 @@ if (sign.val >= 0) {
 }
   
 genes <- df[q.filter & log2.filter,"gene"]$gene
-#geneList <- df[q.filter & log2.filter,"avg_log2FC"]$avg_log2FC
-#names(geneList) <- genes
-#geneList <- sort(geneList, decreasing = TRUE)
+geneList <- df[q.filter & log2.filter,"avg_log2FC"]$avg_log2FC
+names(geneList) <- genes
+geneList <- sort(geneList, decreasing = TRUE)
 
 # enrich genes
 go.bp.en <- enrichGO(gene     = genes,
@@ -76,3 +78,11 @@ write_xlsx(output, xlsxfile)
 
 output
 }
+
+#gse <- gseGO(geneList = geneList,
+#             keyType = "SYMBOL",
+#             ont = "BP",
+#             minGSSize = 3,
+#             pvalueCutoff = 0.05,
+#             OrgDb = "org.Mm.eg.db")
+#gse.emap <- enrichplot::pairwise_termsim(gse)
