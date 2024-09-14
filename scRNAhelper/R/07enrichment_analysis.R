@@ -38,13 +38,17 @@ if (is.null(df)) {
 
 # filter genes
 q.filter <- df[[p.val]] < de.q.val
+upregulated.filter   <- df$avg_log2FC >= log2fold.val
+downregulated.filter <- df$avg_log2FC <= -log2fold.val
+
 log2.filter <- q.filter & FALSE # set to all FALSE
 if (sign.val <= 0) {
-  log2.filter <- log2.filter | df$avg_log2FC <= -log2fold.val
+  log2.filter <- log2.filter | downregulated.filter
 }
 if (sign.val >= 0) {
-  log2.filter <- log2.filter | df$avg_log2FC >= log2fold.val
+  log2.filter <- log2.filter | upregulated.filter
 }
+
   
 genes <- df[q.filter & log2.filter,"gene"]$gene
 geneList <- df[q.filter & log2.filter,"avg_log2FC"]$avg_log2FC
@@ -78,11 +82,26 @@ write_xlsx(output, xlsxfile)
 
 output
 }
-
+#library(enrichplot)
+#library(GOSemSim)
 #gse <- gseGO(geneList = geneList,
 #             keyType = "SYMBOL",
 #             ont = "BP",
-#             minGSSize = 3,
+#             minGSSize = 3, 
 #             pvalueCutoff = 0.05,
 #             OrgDb = "org.Mm.eg.db")
-#gse.emap <- enrichplot::pairwise_termsim(gse)
+#gse.emap <- pairwise_termsim(gse)
+#treeplot(gse.emap, nwords = 30, nCluster = 5, showCategory = 100)
+#
+#go.bp.emap <- pairwise_termsim(go.bp.en,
+#                               semData = godata(annoDb = org.Mm.eg.db, keytype = "SYMBOL", ont = "BP")) %>% 
+#  simplify(cutoff = .2 ,by="Count", select_fun = max,semData = godata(annoDb = org.Mm.eg.db, keytype = "SYMBOL", ont = "BP"))
+#
+#p <- treeplot(go.bp.emap,cluster.params = list(n = 6), hclust_method = "complete",
+#              showCategory = 50, color = "qvalue",
+#              clusterPanel.params = list(geneClusterPanel = "pie"))
+#p
+#
+#cnetplot(go.bp.en, node_label="category", showCategory = 20)
+#goplot(go.bp.emap)
+#emapplot(go.bp.emap, showCategory = 30)

@@ -7,7 +7,7 @@
 mergedata(
   min.features = 1000,
   min.cells = 3,
-  TenX.folder = "./10X/",
+  raw_matrix = "./raw_feature_bc_matrix.h5",
   saverds = TRUE,
   write.rdsfile = "./saveddata/merged_cells.rds"
 )
@@ -26,7 +26,4 @@ a Seurat Object
 }
 \description{
 Grabs 10X data from file, merges into single Seurat object
-}
-\details{
-10X files must be located in \code{TenX.folder}/num
 }

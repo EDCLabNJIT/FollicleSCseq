@@ -33,3 +33,15 @@ sample estimates:
 mean of x mean of y 
 0.5868122 0.5638103 
 
+
+	Welch Two Sample t-test
+
+data:  ctrlMito and mmMito
+t = -0.58198, df = 16055, p-value = 0.5606
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.2879663  0.1561137
+sample estimates:
+mean of x mean of y 
+ 6.340264  6.406190 
+

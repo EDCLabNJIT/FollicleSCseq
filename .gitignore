@@ -2,7 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
-morrisdata
 saveddata
-10X
-music.R
+ppar
+unfinished
+ovary_0.rds
+raw_feature_bc_matrix.h5

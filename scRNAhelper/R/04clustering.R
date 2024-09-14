@@ -28,9 +28,9 @@ if (is.null(seuratObj)){
   sc.cells <- seuratObj
 }
 
-sc.cells <- FindNeighbors(sc.cells, reduction = "pca", dims = 1:PC)
+sc.cells <- FindNeighbors(sc.cells, reduction = "integrated.cca", dims = 1:PC)
 
-sc.cells <- RunUMAP(sc.cells, dims = 1:umapPC)
+sc.cells <- RunUMAP(sc.cells, dims = 1:umapPC, reduction = "integrated.cca")
   
 sc.cells <- FindClusters(sc.cells, resolution = resolution)
 

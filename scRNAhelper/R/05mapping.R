@@ -28,7 +28,7 @@ library(readxl)
 #' @param saverds saves as an rds if `TRUE`.
 #' @param write.rdsfile path to save rds file to if `saverds == TRUE`
 mapcells <- function(seuratObj = NULL, seuratFile = "./saveddata/clustered_cells.rds",
-                       atlasFile = "./morrisdata/ovary_0.rds",
+                       atlasFile = "ovary_0.rds",
                        make.plots = TRUE, plotLocation = "./images/",
                        atlas.rename = c(), umapPC = 20,
                        PC = 15, anchor.n.trees = 50, anchor.k.anchor = 15, anchor.k.score = 100,
@@ -66,7 +66,7 @@ morris.atlas <- RunUMAP(morris.atlas, dims = 1:umapPC, reduction = "pca",reducti
 
 # projects umap onto sc.cells
 sc.cells <- ProjectUMAP(reference = morris.atlas, query = sc.cells, query.dims = 1:umapPC, reference.dims = 1:umapPC,
-                        query.reduction = "pca", reference.reduction = "pca", reduction.model = "umap", reduction.name = "umap2")
+                        query.reduction = "integrated.cca", reference.reduction = "pca", reduction.model = "umap", reduction.name = "umap2")
 
 
 
@@ -87,7 +87,7 @@ gran.anchors <- FindTransferAnchors(reference = atlas.gran, query = sc.gran, dim
                                     reference.reduction = "pca", k.anchor = anchor.k.anchor, k.score = anchor.k.score, n.trees = anchor.n.trees)
 
 sc.gran <- MapQuery(anchorset = gran.anchors, query = sc.gran, reference = atlas.gran,
-                    reference.reduction = "pca", reduction.model = "umap", refdata = list(Level1 = "Level1"))
+                    reduction.model = "umap", refdata = list(Level1 = "Level1"))
 sc.gran$Level1 <- sc.gran$predicted.Level1
 Idents(sc.gran) <- "Level1"
 
@@ -96,7 +96,7 @@ mes.anchors <- FindTransferAnchors(reference =atlas.mes, query = sc.mes, dims = 
                                     reference.reduction = "pca", k.anchor = anchor.k.anchor, k.score = anchor.k.score, n.trees = anchor.n.trees)
 
 sc.mes <- MapQuery(anchorset = mes.anchors, query = sc.mes, reference = atlas.mes,
-                               reference.reduction = "pca", reduction.model = "umap", refdata = list(Level1 = "Level1"))
+                               reduction.model = "umap", refdata = list(Level1 = "Level1"))
 sc.mes$Level1 <- sc.mes$predicted.Level1
 Idents(sc.mes) <- "Level1"
 
@@ -134,13 +134,13 @@ if (make.plots) {
   
   celltypes.level0 <- sc.cells$Level0 %>% table %>% sort(decreasing = TRUE) %>% names
   celltypes.level1 <- sc.cells$Level1 %>% table %>% sort(decreasing = TRUE) %>% names
+  sampletypes <- sc.cells$orig.ident %>% table %>% sort(decreasing = TRUE) %>% names
+  stimtypes <- sc.cells$stim %>% table %>% sort(decreasing = TRUE) %>% names
   colmap.level0 <- setNames(col_palette[1:length(celltypes.level0)], celltypes.level0)
   colmap.level1 <- setNames(col_palette[1:length(celltypes.level1)], celltypes.level1)
+  colmap.samples <- setNames(col_palette[1:length(sampletypes)], sampletypes)
+  colmap.stim <- setNames(col_palette[1:length(stimtypes)], stimtypes)
   
-  #p0 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level0",
-  #              label = TRUE, repel=TRUE, label.box = TRUE, label.size = 3, cols=colmap.level0) + NoLegend()
-  #p1 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level1", shuffle = TRUE,
-  #              label = TRUE, repel=TRUE, label.box = TRUE, label.size = 3, cols=colmap.level1) + NoLegend()
   p3 <- DimPlot(sc.cells, reduction = "umap", group.by = "Level0",
                 label = TRUE, repel=TRUE, label.box = TRUE, label.size = 3, cols=colmap.level0) + NoLegend()
   p4 <- DimPlot(sc.cells, reduction = "umap", group.by = "Level1", shuffle = TRUE, seed = 2,
@@ -148,14 +148,7 @@ if (make.plots) {
   p <- ggarrange(p3, p4, nrow=2, ncol=1)
   ggsave(paste0(plotLocation,"mapping_nolegend.png"), plot = p, width = 6, height = 12, dpi = 300, units = "in")
   
-  #q0 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level0",
-  #              cols=colmap.level0) + guides(col = guide_legend(ncol = 1, override.aes = c(size = 3)))
-  #q1 <- DimPlot(morris.atlas, reduction = "umap", group.by = "Level1",
-  #              cols=colmap.level1) + guides(col = guide_legend(ncol = 1, override.aes = c(size = 3)))
-  #legend1 <- cowplot::get_legend(q0)
-  #legend2 <- cowplot::get_legend(q1)
-  #q0 <- q0 + NoLegend()
-  #q1 <- q1 + NoLegend()
+
   q3 <- DimPlot(sc.cells, reduction = "umap", group.by = "Level0",
                 cols=colmap.level0)# + NoLegend()
   q4 <- DimPlot(sc.cells, reduction = "umap", group.by = "Level1",
@@ -167,6 +160,20 @@ if (make.plots) {
   q <- ggarrange(q3, legend1, q4, legend2, nrow = 2, ncol = 2, widths = c(1,.4)) +
           theme(panel.background = element_rect(fill="white"))
   ggsave(paste0(plotLocation,"mapping.png"), plot = q, width = 8, height = 12, dpi = 300, units = "in")
+  
+  
+  
+  sampleplot <- DimPlot(sc.cells, reduction = "umap", group.by = "orig.ident",
+                        cols=colmap.samples, shuffle = TRUE)
+  stimplot <- DimPlot(sc.cells, reduction = "umap", group.by = "stim",
+                      cols=colmap.stim, shuffle = TRUE)
+  legend1 <- cowplot::get_legend(sampleplot)
+  legend2 <- cowplot::get_legend(stimplot)
+  sampleplot <- sampleplot + NoLegend()
+  stimplot <- stimplot + NoLegend()
+  extraplot <- ggarrange(sampleplot, legend1, stimplot, legend2, nrow = 2, ncol = 2, widths = c(1,.4)) +
+    theme(panel.background = element_rect(fill="white"))
+  ggsave(paste0(plotLocation,"samples.png"), plot = extraplot, width = 8, height = 12, dpi = 300, units = "in")
 }
   
 # save objects

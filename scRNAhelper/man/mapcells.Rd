@@ -7,7 +7,7 @@
 mapcells(
   seuratObj = NULL,
   seuratFile = "./saveddata/clustered_cells.rds",
-  atlasFile = "./morrisdata/ovary_0.rds",
+  atlasFile = "ovary_0.rds",
   make.plots = TRUE,
   plotLocation = "./images/",
   atlas.rename = c(),

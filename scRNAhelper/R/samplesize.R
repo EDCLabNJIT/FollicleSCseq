@@ -52,8 +52,12 @@ for (level in 0:1) {
   total = data.frame(Total = colSums(df)) %>% t
   df <- rbind(df, total)
   df$total <- df$CTRL + df$MM
-  df = tibble::rownames_to_column(df,var = "Cell Type")
+  df_prop <- mapply(`/`, df[,], df[6,]) %>% as.data.frame
+  rownames(df_prop) <- rownames(df)
+  df <- tibble::rownames_to_column(df,var = "Cell Type")
+  df_prop = tibble::rownames_to_column(df_prop,var = "Cell Type")
   sheets[[paste0("Level",level)]] <- df
+  sheets[[paste0("Level",level,"-prop")]] <- df_prop
 }
 write_xlsx(sheets,paste0(dataLocation,"samplesize.xlsx"))
 

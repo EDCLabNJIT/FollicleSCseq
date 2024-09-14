@@ -44,12 +44,14 @@ if (make.plots) {
 # filter data
 sc.filter <- subset(sc.ser, subset = nFeature_RNA > nFeature.lower & nFeature_RNA < nFeature.upper & percent_mt < percent.mt.upper & nCount_RNA < nCount.rna.upper)
 
+Idents(sc.filter) <- "orig.ident"
+
 if (findDbls) {
   keptcells = c()
-  for (i in 2262:2267) {
+  for (i in 1:6) {
     count_matrix = sc.filter@assays$RNA@layers[[paste0("counts.",i)]]
     is_singlet <- scDblFinder(count_matrix, returnType = "table")$class == "singlet"
-    keptcells <- append(keptcells, names(Idents(sc.filter))[Idents(sc.filter) == i][is_singlet])
+    keptcells <- append(keptcells, names(Idents(sc.filter))[Idents(sc.filter) == i+2261][is_singlet])
   }
   subset(sc.filter, cells = keptcells)
 }
@@ -68,7 +70,8 @@ if (make.plots) {
   postcount <- sc.filter$orig.ident %>% table
   proportions <- postcount / precount
   
-  
+  ctrlMito <- sc.ser$percent_mt[sc.ser$stim == "CTRL"]
+  mmMito <- sc.ser$percent_mt[sc.cells$stim == "MM"]
   
   sink(testloc)
   print("cells before")
@@ -80,6 +83,7 @@ if (make.plots) {
   print("")
   print(prop.test(cbind(postcount, precount-postcount)))
   print(t.test(proportions[1:3], proportions[4:6]))
+  print(t.test(ctrlMito, mmMito))
   sink()
 }
 

@@ -1,10 +1,10 @@
-# Title of the paper
+# Single cell RNA-seq reveals that granulosa cells are a target of phthalate toxicity in the ovary
 
 ## Abstract
 
 abstract here
 
-link to publication
+[link to publication](ADD LINK HERE)
 
 ## Citation
 
@@ -20,12 +20,20 @@ A pipeline to run the scripts for all analysis done.
 
 Acts a package that runs each step of the analysis through functions to be called by `wrapper.R`
 
-## Data Availability
+#### morrismarkers
 
--   [Maurine atlas Seurat file](https://singlecell.broadinstitute.org/single_cell/study/SCP1914/a-single-cell-atlas-of-the-cycling-murine-ovary) from [Morris et al.](https://elifesciences.org/articles/77239)
+Marker genes compiled from [Morris et al.](https://doi.org/10.7554/elife.77239)
 
-    -   By default, put into a folder named '`morrisdata`'
+#### DAVIDresults
 
--   10x Genomics Cellranger output
+output from using DAVID for gene enrichment, as well as lists of pathways for the figure used. Only for plotting
 
-    -   By default, put into a folder named '`10X`'
+## Setup
+
+-   [Maurine atlas Seurat file](https://singlecell.broadinstitute.org/single_cell/study/SCP1914/a-single-cell-atlas-of-the-cycling-murine-ovary) from [Morris et al.](https://doi.org/10.7554/elife.77239)
+
+    -   Named `ovary_0.rds`
+
+-   10x Genomics Cellranger output. Accessible [here](ADD LINK HERE)
+
+    -   Named `raw_feature_bc_matrix.h5`
