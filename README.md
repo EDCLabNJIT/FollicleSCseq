@@ -4,7 +4,7 @@
 
 abstract here
 
-[link to publication](ADD LINK HERE)
+[link to publication](ADD%20LINK%20HERE)
 
 ## Citation
 
@@ -34,6 +34,6 @@ output from using DAVID for gene enrichment, as well as lists of pathways for th
 
     -   Named `ovary_0.rds`
 
--   10x Genomics Cellranger output. Accessible [here](ADD LINK HERE)
+-   10x Genomics Cellranger output. Accessible [here](ADD%20LINK%20HERE)
 
     -   Named `raw_feature_bc_matrix.h5`

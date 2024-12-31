@@ -63,7 +63,7 @@ for (sheetname in sheetnames) {
   }
   df <- read_xlsx(filename, sheetname, n_max = 1000)
   s <- df[df[,"FDR"] < .05 & !is.na(df[,"FDR"]),"avg_log2FC"] > 0
-  if (sum(s) > 0){
+  if (length(s) > 0){
     bardata2 <- bardata2 %>% add_row(Category = "upregulated", Celltype = sheetname, Maintype = main, values = sum(s), values2 = sum(s))
     bardata2 <- bardata2 %>% add_row(Category = "downregulated", Celltype = sheetname, Maintype = main, values = sum(1-s), values2 = -sum(1-s))
   }

@@ -11,15 +11,15 @@ sc.cells <- preprocess(sc.cells, make.plots = TRUE, plotLocation = "./images/",
                        nfeatures = 5000,
                        saverds = FALSE, write.rdsfile = "./saveddata/preprocessed_cells.rds")
 
-sc.cells <- cluster(sc.cells, seuratObj = NULL, seuratFile = "./saveddata/preprocessed_cells.rds", PC = 15,
+sc.cells <- cluster(seuratObj = NULL, seuratFile = "./saveddata/preprocessed_cells.rds", PC = 15,
                     resolution = 0.01, identities = c("0" = "Granulosa","1" = "Mesenchyme","2" = "Endothelium","3" = "Immune", "4" = "Epithelium"),
                     makeplots = TRUE, plotLocation = "./images/", dotmarkers = "./morrismarkers/morris_markers.csv",
                     saverds = FALSE, write.rdsfile = "./saveddata/clustered_cells.rds")
 
 #                  old name                  new name
-atlas.rename <- c("GC_Estrous"            = "GC_Luteinizing and CL",
-                  "GC_CL_Lytic"           = "GC_Luteinizing and CL",
-                  "GC_CL_Active"          = "GC_Luteinizing and CL",
+atlas.rename <- c("GC_Estrous"            = "GC_Luteinizing",
+                  "GC_CL_Lytic"           = "GC_Regressing CL",
+                  "GC_CL_Active"          = "GC_Active CL",
                   "GC_Antral"             = "GC_Mural",
                   "GC_Preantral"          = "GC_Cumulus",
                   "M_Immature Theca"      = "M_Early Theca",
@@ -27,17 +27,18 @@ atlas.rename <- c("GC_Estrous"            = "GC_Luteinizing and CL",
                   "M_Cortical Stroma"     = "M_Steroidogenic Stroma",
                   "M_Medullary Stroma"    = "M_Fibroblast-like Stroma")
 
-sc.cells <- mapcells(sc.cells, seuratObj = NULL, seuratFile = "./saveddata/clustered_cells.rds",
+
+sc.cells <- mapcells(seuratObj = NULL, seuratFile = "./saveddata/clustered_cells.rds",
                      atlasFile = "./ovary_0.rds",
                      make.plots = TRUE, plotLocation = "./images/",
                      atlas.rename = atlas.rename, PC = 20, umapPC = 20,
                      anchor.n.trees = 50, anchor.k.anchor = 5, anchor.k.score = 30,
-                     saverds = FALSE, write.rdsfile = "./saveddata/mapped_cells.rds",
+                     saverds = TRUE, write.rdsfile = "./saveddata/mapped_cells.rds",
                      marker.folder = "./morrismarkers/", 
                      projumapargs = list(annoy.metric = "cosine"))
 
 DE.data <- calcDE(sc.cells, 
-                  savedata = FALSE, DEFolder = "./data2/")
+                  savedata = TRUE, DEFolder = "./data/")
 
 # Enrichment done with DAVID
 #                   level sheetname  p/qval reg log2fold cutoff
@@ -75,12 +76,14 @@ geneplot <- VlnPlot(sc.cells, c("Srsf5"), group.by = "Level0", split.by = "stim"
 ggsave("images/Srsf5.png", geneplot, width = 6, height = 4)
 
 regulationplots("data/DE_level0.xlsx", "data/DE_level1.xlsx",
-               c("Granulosa", "Mesenchyme", "Epithelium", "Endothelium", "Immune") %>% rev,
-               c('Immune', 'Epithelium', 'Endothelium', 'M-Steroidogenic Theca',
-                 'M-Steroidogenic Stroma', 'M-Smooth Muscle', 'M-Pericyte', 'M-Fibroblast-like Stroma',
-                 'M-Early Theca', 'GC-Mural', 'GC-Mitotic', 'GC-Luteinizing and CL', 'GC-Cumulus', 'GC-Atretic'),
-               20,
-               "images/regulation0.png", "images/regulation1.png")
+                c("Granulosa", "Mesenchyme", "Epithelium", "Endothelium", "Immune") %>% rev,
+                c('Immune', 'Epithelium', 'Endothelium', 'M-Steroidogenic Theca',
+                  'M-Steroidogenic Stroma', 'M-Smooth Muscle', 'M-Pericyte', 'M-Fibroblast-like Stroma',
+                  'M-Early Theca',
+                  'GC-Mural', 'GC-Mitotic', 'GC-Luteinizing', "GC-Regressing CL", "GC-Active CL",
+                  'GC-Cumulus', 'GC-Atretic'),
+                20,
+                "images/regulation0.png", "images/regulation1.png")
 
 if (FALSE) {
   prepareCCC()
