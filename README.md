@@ -2,13 +2,16 @@
 
 ## Abstract
 
-abstract here
+Phthalates are known endocrine disrupting chemicals and ovarian toxicants that are used widely in consumer products. Phthalates have been shown to exert ovarian toxicity on multiple endpoints, altering transcription of genes responsible for normal ovarian function. However, the molecular mechanisms by which phthalates act on the ovary are not well understood. In this study, we hypothesized that phthalates specifically target granulosa cells within the ovarian follicle. To test our hypothesis, we cultured whole mouse antral follicles for 96 hours in the presence of vehicle or 10 µg/mL of a phthalate metabolite mixture. At the end of the culture period, follicles were dissociated into single cell suspensions and subjected to single cell RNA sequencing. We used markers from published studies to identify cell type clusters, the largest of which were granulosa and theca/stroma cells. We further identified sub-populations of granulosa, theca, and stromal cells and analyzed differentially expressed genes between the phthalate treatment and control. Granulosa cells, specifically mural granulosa cells, had the most differentially expressed genes. Pathway analysis of differentially expressed genes from the overall granulosa cell cluster revealed disruption of cell cycle and mitosis, whereas pathway analysis of the mural granulosa cell subcluster identified terms related to translation, ribosome, and endoplasmic reticulum. Our findings suggest that phthalates have both broad impacts on cell types and specific impacts on cellular subtypes, emphasizing the complexity of phthalate toxicity and highlighting how bulk sequencing can mask effects on vulnerable cell types.
 
-[link to publication](ADD%20LINK%20HERE)
+[link to publication](https://doi.org/10.1093/toxsci/kfaf001)
 
 ## Citation
 
-citation here
+
+
+Erik Mattson, Genoa R Warner, Single cell RNA-seq reveals that granulosa cells are a target of phthalate toxicity in the ovary, Toxicological Sciences, 2025, kfaf001, https://doi.org/10.1093/toxsci/kfaf001
+
 
 ## Contents
 
